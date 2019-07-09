@@ -15,3 +15,5 @@ gmall-list-service 8074
 cart.gmall.com gmall-cart-web 8085
 gmall-cart-service 8075
 
+order.gmall.com gmall-order-web 8086
+
