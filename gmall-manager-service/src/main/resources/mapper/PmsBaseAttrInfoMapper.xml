@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shadow.gmall.manager.mapper.PmsBaseAttrInfoMappre">
+    <select id="selectAttrInfoListByIds"  resultMap="selectAttrInfoListByIdsMap">
+       SELECT
+            pbai.id as pbai_id,pbav.id as pbav_id,pbai.*,pbav.*
+        FROM
+            pms_base_attr_info pbai,
+            pms_base_attr_value pbav
+        WHERE
+            pbai.id = pbav.attr_id
+        AND pbav.id IN (${valueIdsStr})
+    </select>
+    <resultMap id="selectAttrInfoListByIdsMap" type="com.shadow.gmall.beans.PmsBaseAttrInfo" autoMapping="true">
+        <id property="id" column="pbai_id"></id>
+        <collection property="attrValueList" javaType="list" ofType="com.shadow.gmall.beans.PmsBaseAttrValue" autoMapping="true">
+            <id property="id" column="pbav_id"></id>
+        </collection>
+    </resultMap>
+
+   <!--<resultMap id="selectAttrInfoListByIdsMap" type="com.shadow.gmall.beans.PmsBaseAttrInfo" autoMapping="true">
+        <id property="id" column="pbai_id"></id>
+        <collection property="attrValueList" javaType="list" ofType="com.shadow.gmall.beans.PmsBaseAttrValue" select="selectAttrValueListByIds" column="id"/>
+    </resultMap>
+
+    <select id="selectAttrInfoListByIds" resultMap="selectAttrInfoListByIdsMap" >
+        SELECT *,id as pbai_id FROM `pms_base_attr_info` where id in (${valueIdsStr})
+    </select>
+
+    <select id="selectAttrValueListByIds" resultType="com.shadow.gmall.beans.PmsBaseAttrValue">
+        SELECT * FROM `pms_base_attr_value` where attr_id = #{id}
+    </select>
+    这个state有问题-->
+
+
+
+
+</mapper>
