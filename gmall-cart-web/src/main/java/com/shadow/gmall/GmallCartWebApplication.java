@@ -1,13 +1,13 @@
-package com.shadow.gmall.order;
+package com.shadow.gmall;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class GmallOrderWebApplication {
+public class GmallCartWebApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(GmallOrderWebApplication.class, args);
+		SpringApplication.run(GmallCartWebApplication.class, args);
 	}
 
 }

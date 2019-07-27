@@ -1,22 +1,18 @@
 package com.shadow.gmall.cart.controller;
 
-import Utils.CookieUtil;
+import com.shadow.gmall.Utils.CookieUtil;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.fastjson.JSON;
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import com.shadow.gmall.beans.OmsCartItem;
 import com.shadow.gmall.beans.PmsSkuInfo;
-import com.shadow.gmall.service.OmsCartItemCacheService;
+import com.shadow.gmall.myAnnotation.SSOAnnotation;
 import com.shadow.gmall.service.OmsCartItemService;
 import com.shadow.gmall.service.PmsSkuInfoService;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
@@ -27,8 +23,6 @@ import java.util.List;
 @Controller
 public class CartHandler {
 
-    @Reference
-    private OmsCartItemCacheService omsCartItemCacheService;
 
     @Reference
     private PmsSkuInfoService pmsSkuInfoService;
@@ -36,18 +30,18 @@ public class CartHandler {
     @Reference
     private OmsCartItemService omsCartItemService;
 
-
+    @SSOAnnotation
     @RequestMapping("checkCart")
     public String checkCart(HttpServletRequest request,OmsCartItem omsCartItem,ModelMap map){
         List<OmsCartItem> omsCartItemList=new ArrayList<>();
         //判断用户是否登陆
-        String memberId="";
+        String memberId = (String)request.getAttribute("memberId");
         if(StringUtils.isBlank(memberId)){
             //根据页面上的选中状态去改变cookies中对应商品的选中状态
             String cookieValue = CookieUtil.getCookieValue(request, "carItemCookies", true);
             if(StringUtils.isNotBlank(cookieValue)){
                 omsCartItemList= JSON.parseArray(cookieValue, OmsCartItem.class);
-                for (OmsCartItem cartItem : omsCartItemList) {
+                for (OmsCartItem cartItem : omsCartItemList) { ;
                     if(cartItem.getProductSkuId().equals(omsCartItem.getProductSkuId())){
                         //将页面上商品的选中状态设置为cookies中对应商品的选中状态
                         cartItem.setIsChecked(omsCartItem.getIsChecked());
@@ -59,7 +53,7 @@ public class CartHandler {
             //根据页面上的选中状态去改变db中对应商品的选中状态
             this.omsCartItemService.updataCartItemToDB(omsCartItem);
             //从缓存中取出购物车的数据
-            omsCartItemList=this.omsCartItemCacheService.getDataFromCacheByMemberId(memberId);
+            omsCartItemList=this.omsCartItemService.getDataFromCacheByMemberId(memberId);
             //判断能否从缓存中直接取出所有的商品信息
             if(omsCartItemList==null){
                 String skuId=null;
@@ -75,11 +69,12 @@ public class CartHandler {
 
     /*购物车列表
      */
+    @SSOAnnotation
     @RequestMapping("cartList")
     public String cartList(HttpServletRequest request, ModelMap map){
         List<OmsCartItem> omsCartItemList=new ArrayList<>();
         //判断用户是否登陆
-        String memberId="";
+        String memberId = (String)request.getAttribute("memberId");
         if(StringUtils.isBlank(memberId)){
             //从cookies中取值操作
             String cookieValue = CookieUtil.getCookieValue(request, "carItemCookies", true);
@@ -94,7 +89,7 @@ public class CartHandler {
             //从缓存中取值操作,**********web端怎么能直接操作数据库
 //************redisUtil.getUtil();
             //数据库中没有总价格的字段
-            omsCartItemList=this.omsCartItemCacheService.getDataFromCacheByMemberId(memberId);
+            omsCartItemList=this.omsCartItemService.getDataFromCacheByMemberId(memberId);
             //判断能否从缓存中直接取出所有的商品信息
             if(omsCartItemList==null){
                 String skuId=null;
@@ -125,10 +120,11 @@ public class CartHandler {
 
 
     @RequestMapping("addToCart")
+    @SSOAnnotation
     public String addToCart(OmsCartItem omsCartItem, HttpServletRequest request, HttpServletResponse response){
-        //根据productSkuId也就是skuId查出具体的sku信息
         String skuId = omsCartItem.getProductSkuId();
 
+        //根据productSkuId也就是skuId查出具体的sku信息
         PmsSkuInfo pmsSkuInfo = this.pmsSkuInfoService.queryById(skuId);
         //新建一个购物车，供下面的分支使用
         List<OmsCartItem> omsCartItemList=new ArrayList<>();
@@ -144,7 +140,7 @@ public class CartHandler {
         omsCartItem.setTotalPrice(pmsSkuInfo.getPrice().multiply(omsCartItem.getQuantity()));
 
         //使用用户id判断用户是否登陆
-        String memberId= "";
+        String memberId = (String)request.getAttribute("memberId");
         if(StringUtils.isBlank(memberId)){
             //未登录，从浏览器中获取cookie,不同步cookies进入缓存
             String cookieValue = CookieUtil.getCookieValue(request, "carItemCookies", true);
@@ -180,7 +176,7 @@ public class CartHandler {
             //已登录，每次操作数据都进行缓存的同步，从db中的购物车中查询是否存在该商品的信息
             //将选中商品信息放入db
             omsCartItem.setMemberId(memberId);
-            omsCartItem.setMemberNickname(null);
+            omsCartItem.setMemberNickname((String)request.getAttribute("nickname"));
             //已知memberId,和商品的skuID查询对应的cartItem对象信息
             List<OmsCartItem> cartItemByMemberIdSkuId = this.omsCartItemService.getCartItemByMemberIdSkuId(memberId, skuId);
             if(cartItemByMemberIdSkuId==null || cartItemByMemberIdSkuId.size()==0){

@@ -21,4 +21,8 @@
     <select id="QUMSADD" resultType="com.shadow.gmall.beans.UmsMemberReceiveAddress">
         SELECT * FROM ums_member_receive_address WHERE member_id=#{id}
     </select>
+
+    <select id="selectOneFromDB" resultType="com.shadow.gmall.beans.UmsMember">
+        SELECT * FROM ums_member WHERE source_uid=#{sourceUid}
+    </select>
 </mapper>

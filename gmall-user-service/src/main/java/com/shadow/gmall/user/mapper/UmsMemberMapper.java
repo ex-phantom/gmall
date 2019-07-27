@@ -13,4 +13,6 @@ public interface UmsMemberMapper extends Mapper<UmsMember> {
 
 
     UmsMember queryUmsAddressById(@Param("id") String id);
+
+    UmsMember selectOneFromDB(@Param("sourceUid")long sourceUid);
 }

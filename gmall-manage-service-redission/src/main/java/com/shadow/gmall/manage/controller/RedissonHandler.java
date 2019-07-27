@@ -1,13 +1,11 @@
 package com.shadow.gmall.manage.controller;
 
-import com.shadow.gmall.redisLinked.config.RedisConfig;
 import com.shadow.gmall.redisLinked.redisClient.RedisUtil;
 import jodd.util.StringUtil;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import redis.clients.jedis.Jedis;
 

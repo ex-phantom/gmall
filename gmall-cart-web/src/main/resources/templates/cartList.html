@@ -167,6 +167,7 @@
        }
         var param="isChecked="+isCheckedFlag+"&"+"productSkuId="+skuId;
         $.post("checkCart",param,function (data) {
+//            sumSumPrice();
             //使用ajax获取的数据直接覆盖原有的页面
             $("#CartItemInnerId").html(data);
         });
@@ -174,7 +175,7 @@
     }
 
      //封装总价钱函数
-     function sumSumPrice(){
+//     function sumSumPrice(){
 //         var zzj=0;
 //         $(".check").each(function () {
 //             if($(this).prop("checked")){
@@ -183,7 +184,7 @@
 //             }
 //             $(".fnt").html("￥"+zzj+".00")
 //         });
-     }
+//     }
 
 /*    //购物车结算固定定位
     $(document).scroll(function(){

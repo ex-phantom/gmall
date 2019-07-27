@@ -1,4 +1,4 @@
-package Utils;
+package com.shadow.gmall.Utils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;

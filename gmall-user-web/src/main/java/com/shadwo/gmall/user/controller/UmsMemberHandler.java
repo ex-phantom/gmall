@@ -4,20 +4,16 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.shadow.gmall.beans.UmsMember;
 import com.shadow.gmall.service.UmsMemberService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
 public class UmsMemberHandler {
     @Reference
     private UmsMemberService umsMemberService;
-    @RequestMapping("umsMember/index")
-    public String test(){
-        return "hello word!!!";
-    }
 
     @RequestMapping("umsMember/get/all.html")
     public String getAll(){

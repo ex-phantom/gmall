@@ -17,6 +17,7 @@ gmall-cart-service 8075
 
 order.gmall.com gmall-order-web 8086
 
+password.gmall.com gmall-password-web 8087
 
-6666
+payment.gmall.com gmall-payment-web 8088
 

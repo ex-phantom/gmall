@@ -20,13 +20,38 @@ public class UmsMember implements Serializable{
     private int status;
     private Date createTime;
     private String icon;
-    private int gender;
+    private String gender;
     private Date birthday;
     private String city;
     private String job;
     private String personalizedSignature;
-    private long sourceUid;
-    private int sourceType;
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getSourceUid() {
+        return sourceUid;
+    }
+
+    public void setSourceUid(String sourceUid) {
+        this.sourceUid = sourceUid;
+    }
+
+    public String getSourceType() {
+        return sourceType;
+    }
+
+    public void setSourceType(String sourceType) {
+        this.sourceType = sourceType;
+    }
+
+    private String sourceUid;
+    private String sourceType;
     private int integration;
     private int growth;
     private int luckeyCount;
@@ -144,13 +169,7 @@ public class UmsMember implements Serializable{
         this.icon = icon;
     }
 
-    public int getGender() {
-        return gender;
-    }
 
-    public void setGender(int gender) {
-        this.gender = gender;
-    }
 
     public Date getBirthday() {
         return birthday;
@@ -184,21 +203,9 @@ public class UmsMember implements Serializable{
         this.personalizedSignature = personalizedSignature;
     }
 
-    public long getSourceUid() {
-        return sourceUid;
-    }
 
-    public void setSourceUid(long sourceUid) {
-        this.sourceUid = sourceUid;
-    }
 
-    public int getSourceType() {
-        return sourceType;
-    }
 
-    public void setSourceType(int sourceType) {
-        this.sourceType = sourceType;
-    }
 
     public int getIntegration() {
         return integration;

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import redis.clients.jedis.Jedis;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,9 +66,18 @@ public class OmsCartItemServiceImpl implements OmsCartItemService{
 //        this.omsCartItemMapper.updateByPrimaryKeySelective(omsCartItem);
     }
 
+//    @Override
+//    public void putCartsItemToDB(List<OmsCartItem> omsCartItemList,String memberId) {
+//
+//        for (OmsCartItem omsCartItem : omsCartItemList) {
+//            this.omsCartItemMapper.insertSelective(omsCartItem);
+//        }
+//        //同步缓存
+//        this.currentCache(memberId);
+//    }
 
 
-    //同步缓存,通过memberid查询该用户下所有的商品，注入redis缓存
+    //同步缓存商品,通过memberid查询该用户下所有的商品，注入redis缓存
     private void currentCache(String memberId) {
         //获得redis的连接
         Jedis jedis=null;
@@ -80,7 +90,7 @@ public class OmsCartItemServiceImpl implements OmsCartItemService{
             List<OmsCartItem> omsCartItemList = this.omsCartItemMapper.select(omsCartItemExample);
             //注入redis缓存
             if(omsCartItemList!=null){
-                String key="user:"+memberId+":info";
+                String key="user:"+memberId+":cart";
                 for (OmsCartItem omsCartItem : omsCartItemList) {
                     String SkuId = omsCartItem.getProductSkuId();
                     String omsCartItemJSON = JSON.toJSONString(omsCartItem);
@@ -91,7 +101,31 @@ public class OmsCartItemServiceImpl implements OmsCartItemService{
         }finally {
             jedis.close();
         }
+    }
 
 
+    @Override
+    public List<OmsCartItem> getDataFromCacheByMemberId(String memberId) {
+        //获得redis的连接
+        Jedis jedis=null;
+        List<OmsCartItem> omsCartItemList=new ArrayList<>();
+        try{
+            jedis= this.redisUtil.getJedis();
+            //根据key查询redis中hash结构所有的值cart
+            String key="user:"+memberId+":cart";
+            List<String> omsCartItemStrs = jedis.hvals(key);
+            if(omsCartItemStrs!=null){
+                for (String omsCartItemStr : omsCartItemStrs) {
+                    //解析
+                    OmsCartItem omsCartItem = JSON.parseObject(omsCartItemStr, OmsCartItem.class);
+                    //redis数据库中没有总价格的字段,需要设置
+                    omsCartItem.setTotalPrice(omsCartItem.getQuantity().multiply(omsCartItem.getPrice()));
+                    omsCartItemList.add(omsCartItem);
+                }
+            }
+        }finally {
+            jedis.close();
+        }
+        return omsCartItemList;
     }
 }
